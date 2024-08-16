@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
 
 @Controller('cars')
 // We can add pipes on controller level to any method inside
@@ -31,15 +32,18 @@ export class CarsController {
   @Post()
   createCar(@Body() createCarDto: CreateCarDto) {
     return {
-      data: createCarDto,
+      data: this.carsSercice.create(createCarDto),
       method: 'POST',
     };
   }
 
   @Patch(':id')
-  updateCard(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {
+  updateCard(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
     return {
-      data: body,
+      data: this.carsSercice.update(id, updateCarDto),
       method: 'PATCH',
     };
   }
@@ -47,8 +51,7 @@ export class CarsController {
   @Delete(':id')
   deleteCar(@Param('id', ParseUUIDPipe) id: string) {
     return {
-      message: `The car with id '${id}' was deleted`,
-      status: 'ok',
+      message: this.carsSercice.delete(id),
       method: 'DELETE',
     };
   }
